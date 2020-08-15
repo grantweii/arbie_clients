@@ -1,0 +1,13 @@
+.graphTypeSelect {
+    max-width: 200px;
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
+.grid {
+    @media (min-width: 768px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+}
