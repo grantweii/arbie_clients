@@ -10,7 +10,7 @@ export interface IStock {
     name: string;
 }
 
-export interface IAnnualFinancial {
+export interface IFundamental {
     date: string;
     entry: string;
     id: number;
@@ -33,12 +33,22 @@ export const getAnnualFinancial = async (key: any, { stock_id, fields }: any) =>
     return response.result;
 }
 
+export const getQuarterlyFinancial = async (key: any, { stock_id, fields }: any) => {
+    const response = await get(`/quarterly-financials?stock_id=${stock_id}&fields=${fields}`);
+    return response.result;
+}
+
 export const getStock = async (key: any, { id }: any) => {
     const response = await get(`/stocks/${id}`);
     return response.result;
 }
 
-export const getHolders = async (key: any, { stock_id }: any) => {
-    const response = await get(`/stocks/${stock_id}/holders`);
+export const getInstitutionalHolders = async (key: any, { stock_id }: any) => {
+    const response = await get(`/stocks/${stock_id}/institutional-holders`);
+    return response.result;
+}
+
+export const getMajorHolders = async (key: any, { stock_id }: any) => {
+    const response = await get(`/stocks/${stock_id}/major-holders`);
     return response.result;
 }

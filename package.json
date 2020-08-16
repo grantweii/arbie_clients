@@ -22,6 +22,7 @@
         "echarts": "^4.8.0",
         "echarts-for-react": "^2.0.16",
         "emotion-theming": "^10.0.27",
+        "moment": "^2.27.0",
         "node-sass": "^4.14.1",
         "parcel": "^2.0.0-beta.1",
         "react": "^16.13.1",
@@ -32,7 +33,8 @@
         "router5": "^8.0.1",
         "router5-plugin-browser": "^8.0.1",
         "router5-plugin-logger": "^8.0.1",
-        "typescript": "^3.9.7"
+        "typescript": "^3.9.7",
+        "use-debounce": "^3.4.3"
     },
     "devDependencies": {
         "@parcel/transformer-typescript-tsc": "^2.0.0-beta.1",
