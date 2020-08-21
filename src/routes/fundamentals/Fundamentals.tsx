@@ -5,7 +5,7 @@ import echarts from 'echarts/lib/echarts';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/chart/line';
-import { getAnnualFinancial, IFundamental, getInstitutionalHolders, getMajorHolders, getQuarterlyFinancial } from '../dashboard/DashboardActions';
+import { getAnnualFinancial, IFundamental, getInstitutionalHolders, getMajorHolders, getQuarterlyFinancial, getAnnualCashflow, getQuarterlyCashflow, ICashflow } from '../dashboard/DashboardActions';
 import { useQuery } from 'react-query';
 import { Spinner, Heading, SimpleGrid, Stack, Box, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Alert, AlertIcon } from "@chakra-ui/core";
 import Select from 'react-select';
@@ -121,15 +121,28 @@ const Fundamentals: FC<any> = ({ children }) => {
         { staleTime: 60 * 1000 * 10, enabled: graphPeriod === 'quarterly', onSuccess: handleDataRetrieved }
     );
 
-    const data = graphPeriod === 'annual' ? annualFinancials : quarterlyFinancials;
+    const { data: annualCashflows } = useQuery(
+        ['annualCashflows', { stock_id: params.id }],
+        getAnnualCashflow,
+        { staleTime: 60 * 1000 * 10, enabled: graphPeriod === 'annual', onSuccess: handleDataRetrieved }
+    );
 
-    const { dates: dilutedEPSDates, values: dilutedEPSValues } = filterFundamentals(data, 'diluted_eps', graphType, yearsToFilter);
-    const { dates: netIncomeDates, values: netIncomeValues } = filterFundamentals(data, 'net_income', graphType, yearsToFilter);
-    const { dates: revenueDates, values: revenueValues } = filterFundamentals(data, 'total_revenue', graphType, yearsToFilter);
-    // const { dates: ebitdaDates, values: ebitdaValues } = filterFundamentals(data, 'normalized_ebitda', graphType);
-    const { dates: dilutedAvgSharesDates, values: dilutedAvgSharesValues } = filterFundamentals(data, 'diluted_average_shares', 'linear', yearsToFilter);
+    const { data: quarterlyCashflows } = useQuery(
+        ['quarterlyCashflows', { stock_id: params.id }],
+        getQuarterlyCashflow,
+        { staleTime: 60 * 1000 * 10, enabled: graphPeriod === 'quarterly', onSuccess: handleDataRetrieved }
+    );
 
-    if (!data?.length || !yearsToFilter) return <Spinner/>
+    const financialData = graphPeriod === 'annual' ? annualFinancials : quarterlyFinancials;
+    const cashflowData = graphPeriod === 'annual' ? annualCashflows : quarterlyCashflows;
+
+    const { dates: dilutedEPSDates, values: dilutedEPSValues } = filterFundamentals(financialData, 'diluted_eps', graphType, yearsToFilter);
+    const { dates: netIncomeDates, values: netIncomeValues } = filterFundamentals(financialData, 'net_income', graphType, yearsToFilter);
+    const { dates: revenueDates, values: revenueValues } = filterFundamentals(financialData, 'total_revenue', graphType, yearsToFilter);
+    const { dates: dilutedAvgSharesDates, values: dilutedAvgSharesValues } = filterFundamentals(financialData, 'diluted_average_shares', 'linear', yearsToFilter);
+    const { dates: freeCashFlowDates, values: freeCashFlowValues } = filterFundamentals(cashflowData, 'free_cash_flow', 'linear', yearsToFilter);
+    
+    if (!financialData?.length || !cashflowData?.length || !yearsToFilter) return <Spinner/>
 
     return (
         <React.Fragment>
@@ -195,15 +208,15 @@ const Fundamentals: FC<any> = ({ children }) => {
                     notMerge={true}
                     lazyUpdate={true}
                 />
-                {/* <ReactEchartsCore
-                    echarts={echarts}
-                    option={option(ebitdaDates, ebitdaValues, graphType, 'Normalized EBITDA')}
-                    notMerge={true}
-                    lazyUpdate={true}
-                /> */}
                 <ReactEchartsCore
                     echarts={echarts}
                     option={option(dilutedAvgSharesDates, dilutedAvgSharesValues, 'linear', 'Diluted Average Shares')}
+                    notMerge={true}
+                    lazyUpdate={true}
+                />
+                <ReactEchartsCore
+                    echarts={echarts}
+                    option={option(freeCashFlowDates, freeCashFlowValues, 'linear', 'Free Cash Flow')}
                     notMerge={true}
                     lazyUpdate={true}
                 />
