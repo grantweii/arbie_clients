@@ -1,10 +1,12 @@
 import React, { FC } from 'react';
 import { useRouteNode, useRouter, useRoute } from 'react-router5';
 import { useQuery } from 'react-query';
-import { getStocks, searchStocks, IStock } from './DashboardActions';
+import { getStocks, searchStocks, getStock } from './DashboardActions';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 import * as styles from './DashboardStyles.scss';
+import { IStock } from '../../utils/types';
+import { Spinner } from '@chakra-ui/core';
 
 const mapFilteredStocks = (stocks: IStock[]): SelectOption[] => {
     const mappedOptions = stocks?.map((stock: IStock) => {
@@ -20,7 +22,12 @@ type SelectOption = {
 
 const Dashboard: FC<any> = ({ children }) => {
     const { route, router } = useRouteNode('dashboard');
-    const { data: allStocks } = useQuery(['stocks'], getStocks, { staleTime: 60 * 1000 * 10 });
+    const { params } = route;
+
+    const { data: stock, isLoading } = useQuery(['stocks', { id: params.id }], getStock, {
+        staleTime: 60 * 1000 * 10,
+        enabled: params.id
+    });
 
     const loadOptions = (inputValue: string) => {
         return new Promise(async resolve => {
@@ -33,8 +40,9 @@ const Dashboard: FC<any> = ({ children }) => {
 
     const handleEntrySelected = (input: SelectOption) => {
         router.navigate('stock.id', { id: input.value }, { reload: true });
-        // UP TO HERE TESTING IF THIS ACTUALLY WORKS
     }
+
+    if (params.id && isLoading) return <Spinner/>
 
     return (
         <React.Fragment>
@@ -43,6 +51,7 @@ const Dashboard: FC<any> = ({ children }) => {
                     loadOptions={inputValue => debouncedLoadOptions(inputValue)}
                     cacheOptions
                     defaultOptions
+                    defaultInputValue={params.id && `${stock?.ticker}, ${stock?.name}, ${stock?.exchange}`}
                     className={styles.inputContainer}
                     placeholder='Please provide a ticker'
                     styles={{ control: (provided) => ({ ...provided, cursor: 'text'}) }}

@@ -3,21 +3,6 @@ import bent, { NodeResponse } from 'bent';
 export const get = bent('http://127.0.0.1:5000', 'GET', 'json', 200) as any;
 export const post = bent('http://127.0.0.1:5000', 'POST', 'json', 200) as any;
 
-export interface IStock {
-    id: string;
-    ticker: string;
-    exchange: string;
-    name: string;
-}
-
-export interface IFundamental {
-    date: string;
-    entry: string;
-    id: number;
-    stock_id: number;
-    value: string;
-}
-
 export const getStocks = async () => {
     const response = await get('/stocks');
     return response;

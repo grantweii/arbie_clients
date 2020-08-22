@@ -1,7 +1,7 @@
 
 import Dashboard from '../routes/dashboard/Dashboard';
 import Fundamentals from '../routes/fundamentals/Fundamentals';
-import Stock from '../routes/dashboard/Stock';
+import Stock from '../routes/core/Stock';
 
 export default [
     {
