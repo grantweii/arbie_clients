@@ -4,6 +4,7 @@ import echarts from 'echarts/lib/echarts';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/chart/line';
+import 'echarts/lib/chart/bar';
 import { Spinner, Heading, Stack, Box, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Alert, AlertIcon } from "@chakra-ui/core";
 import Select from 'react-select';
 import * as styles from './Fundamentals.scss';
@@ -11,9 +12,19 @@ import { StockContext } from '../core/Stock';
 import { IStock, Exchange } from '../../utils/types';
 import useFundamentalsViewModel from './FundamentalsViewModel';
 
-const option = (dates: string[], values: number[], graphType: string, title: string, lineColor?: string) => {
+type EchartsProps = {
+    dates: string[],
+    values: number[],
+    graphType: string,
+    title: string,
+    lineColor?: string,
+    ratesOfChangeValues?: any[]
+}
+
+const option = (props: EchartsProps) => {
+    const { dates, values, graphType, title, lineColor, ratesOfChangeValues } = props;
     const yAxisType = graphType === 'log' ? 'log' : 'value';
-    return {
+    const options: any = {
         title: {
             text: title,
             left: 'center',
@@ -24,19 +35,36 @@ const option = (dates: string[], values: number[], graphType: string, title: str
         xAxis: {
             type: 'category',
             data: dates,
+            scale: true,
         },
-        yAxis: {
-            type: yAxisType,
-        },
-        series: [{
-            data: values,
-            type: 'line',
-            lineStyle: { color: lineColor }
-        }],
+        yAxis: [
+            {
+                type: yAxisType,
+            },
+        ],
+        series: [
+            {
+                data: values,
+                type: 'line',
+                lineStyle: { color: lineColor },
+            },
+        ],
         grid: {
             containLabel: true,
-        }
+        },
+    };
+    if (ratesOfChangeValues) {
+        options.series.push({
+            data: ratesOfChangeValues,
+            type: 'bar',
+            yAxisIndex: 1,
+        });
+        options.yAxis.push({
+            type: 'value'
+        });
     }
+    console.log('options', options)
+    return options;
 };
 
 const graphTypeOptions = [
@@ -54,10 +82,13 @@ const Fundamentals: FC<any> = ({ children }) => {
         {
             dilutedEPSDates,
             dilutedEPSValues,
+            dilutedEPSRatesOfChange,
             netIncomeDates,
             netIncomeValues,
+            netIncomeRatesOfChange,
             revenueDates,
             revenueValues,
+            revenueRatesOfChange,
             dilutedAvgSharesDates,
             dilutedAvgSharesValues,
             freeCashFlowDates,
@@ -74,7 +105,6 @@ const Fundamentals: FC<any> = ({ children }) => {
         setGraphType
     ] = useFundamentalsViewModel();
     const stock: IStock = useContext(StockContext);
-    
 
     if (!financialData?.length || !cashflowData?.length || !yearsToFilter) return <Spinner />
 
@@ -127,31 +157,64 @@ const Fundamentals: FC<any> = ({ children }) => {
             <div className={styles.grid}>
                 <ReactEchartsCore
                     echarts={echarts}
-                    option={option(netIncomeDates, netIncomeValues, graphType, 'Net Income') as any}
+                    option={option({
+                        dates: netIncomeDates,
+                        values: netIncomeValues,
+                        graphType,
+                        title: 'Net Income',
+                        lineColor: 'red',
+                        ratesOfChangeValues: netIncomeRatesOfChange
+                    }) as any}
                     notMerge={true}
                     lazyUpdate={true}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
-                    option={option(dilutedEPSDates, dilutedEPSValues, graphType, 'EPS', 'blue') as any}
+                    option={option({
+                        dates: dilutedEPSDates,
+                        values: dilutedEPSValues,
+                        graphType,
+                        title: 'EPS',
+                        lineColor: 'blue',
+                        ratesOfChangeValues: dilutedEPSRatesOfChange
+                    }) as any}
                     notMerge={true}
                     lazyUpdate={true}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
-                    option={option(revenueDates, revenueValues, graphType, 'Total Revenue', 'green') as any}
+                    option={option({
+                        dates: revenueDates,
+                        values: revenueValues,
+                        graphType,
+                        title: 'Total Revenue',
+                        lineColor: 'gray',
+                        ratesOfChangeValues: revenueRatesOfChange,
+                    }) as any}
                     notMerge={true}
                     lazyUpdate={true}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
-                    option={option(dilutedAvgSharesDates, dilutedAvgSharesValues, 'linear', 'Diluted Average Shares', 'purple') as any}
+                    option={option({
+                        dates: freeCashFlowDates,
+                        values: freeCashFlowValues,
+                        graphType: 'linear',
+                        title: 'Free Cash Flow',
+                        lineColor: 'orange',
+                    }) as any}
                     notMerge={true}
                     lazyUpdate={true}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
-                    option={option(freeCashFlowDates, freeCashFlowValues, 'linear', 'Free Cash Flow', 'orange') as any}
+                    option={option({
+                        dates: dilutedAvgSharesDates,
+                        values: dilutedAvgSharesValues,
+                        graphType: 'linear',
+                        title: 'Diluted Average Shares',
+                        lineColor: 'purple',
+                    }) as any}
                     notMerge={true}
                     lazyUpdate={true}
                 />
