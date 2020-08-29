@@ -20,13 +20,13 @@ import {
     NumberDecrementStepper,
     Alert,
     AlertIcon,
-    FormLabel
+    Flex,
 } from "@chakra-ui/core";
 import Select from 'react-select';
 import * as styles from './Fundamentals.scss';
 import { StockContext } from '../core/Stock';
 import { IStock, Exchange } from '../../utils/types';
-import useFundamentalsViewModel from './FundamentalsViewModel';
+import useFundamentalsViewModel, { getMaxIgnoringOutliers, RatesOfChange } from './FundamentalsViewModel';
 
 type EchartsProps = {
     dates: string[],
@@ -34,13 +34,26 @@ type EchartsProps = {
     graphType: string,
     title: string,
     lineColor?: string,
-    ratesOfChangeValues?: any[];
+    ratesOfChangeValues?: RatesOfChange;
     referencePercentage?: number;
     rateOfChangeVisible?: boolean;
+    outlierBoundary?: number;
+    ignoreOutliers?: boolean;
 }
 
 const option = (props: EchartsProps) => {
-    const { dates, values, graphType, title, lineColor, ratesOfChangeValues, referencePercentage, rateOfChangeVisible } = props;
+    const {
+        dates,
+        values,
+        graphType,
+        title,
+        lineColor,
+        ratesOfChangeValues,
+        referencePercentage,
+        rateOfChangeVisible,
+        outlierBoundary,
+        ignoreOutliers,
+    } = props;
     const yAxisType = graphType === 'log' ? 'log' : 'value';
     const options: any = {
         title: {
@@ -85,6 +98,10 @@ const option = (props: EchartsProps) => {
         },
     };
     if (rateOfChangeVisible && ratesOfChangeValues) {
+        let max;
+        if (ignoreOutliers && outlierBoundary) {
+            max = getMaxIgnoringOutliers(ratesOfChangeValues, outlierBoundary);
+        }
         options.series.push({
             data: ratesOfChangeValues,
             type: 'bar',
@@ -99,7 +116,8 @@ const option = (props: EchartsProps) => {
         });
         options.yAxis.push({
             name: '%',
-            type: 'value'
+            type: 'value',
+            max,
         });
     }
     return options;
@@ -139,12 +157,16 @@ const Fundamentals: FC<any> = ({ children }) => {
             yearsToFilter,
             referencePercentage,
             rateOfChangeVisible,
+            outlierBoundary,
+            ignoreOutliers
         },
         debouncedCallback,
         setGraphPeriod,
         setGraphType,
         referenceLineDebounce,
         setRateOfChangeVisibility,
+        outlierBoundaryDebounce,
+        setIgnoreOutliers,
     ] = useFundamentalsViewModel();
     const stock: IStock = useContext(StockContext);
 
@@ -180,8 +202,7 @@ const Fundamentals: FC<any> = ({ children }) => {
                         size='md'
                         width={200}
                         onChange={debouncedCallback}
-                        className={styles.graphTypeSelect}
-                    >
+                        className={styles.graphTypeSelect}>
                         <NumberInputField />
                         <NumberInputStepper>
                             <NumberIncrementStepper />
@@ -202,18 +223,40 @@ const Fundamentals: FC<any> = ({ children }) => {
                         size='md'
                         width={200}
                         onChange={referenceLineDebounce}
-                        className={styles.graphTypeSelect}
-                    >
+                        className={styles.graphTypeSelect}>
                         <NumberInputField />
-                        <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                        </NumberInputStepper>
                     </NumberInput>
                 </Stack>
                 <Stack spacing={3}>
                     <Heading as='h5' size='sm'>Show rate of change</Heading>
-                    <Switch size='lg' id='switch' defaultIsChecked={rateOfChangeVisible} onChange={e => setRateOfChangeVisibility(e.target.checked)}></Switch>
+                    <Switch
+                        size='lg'
+                        id='switch'
+                        defaultIsChecked={rateOfChangeVisible}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRateOfChangeVisibility(e.target.checked)}>
+                    </Switch>
+                </Stack>
+                <Stack spacing={2}>
+                    <Stack isInline>
+                        <Flex justify='space-between' width='full'>
+                            <Heading as='h5' size='sm'>Ignore outliers</Heading>
+                            <Switch
+                                size='md'
+                                id='switch'
+                                defaultIsChecked={ignoreOutliers}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>)  => setIgnoreOutliers(e.target.checked)}>    
+                            </Switch>
+                        </Flex>
+                    </Stack>
+                    <NumberInput
+                        defaultValue={outlierBoundary}
+                        size='md'
+                        width={200}
+                        onChange={outlierBoundaryDebounce}
+                        className={styles.graphTypeSelect}
+                        isDisabled={!ignoreOutliers}>
+                        <NumberInputField />
+                    </NumberInput>
                 </Stack>
             </Stack>
             <div className={styles.grid}>
@@ -227,7 +270,9 @@ const Fundamentals: FC<any> = ({ children }) => {
                         lineColor: 'red',
                         ratesOfChangeValues: netIncomeRatesOfChange,
                         referencePercentage,
-                        rateOfChangeVisible
+                        rateOfChangeVisible,
+                        outlierBoundary,
+                        ignoreOutliers
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
@@ -243,7 +288,9 @@ const Fundamentals: FC<any> = ({ children }) => {
                         lineColor: 'blue',
                         ratesOfChangeValues: dilutedEPSRatesOfChange,
                         referencePercentage,
-                        rateOfChangeVisible
+                        rateOfChangeVisible,
+                        outlierBoundary,
+                        ignoreOutliers
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
@@ -259,7 +306,9 @@ const Fundamentals: FC<any> = ({ children }) => {
                         lineColor: 'gray',
                         ratesOfChangeValues: revenueRatesOfChange,
                         referencePercentage,
-                        rateOfChangeVisible
+                        rateOfChangeVisible,
+                        outlierBoundary,
+                        ignoreOutliers
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}

@@ -7,6 +7,7 @@ import { useDebouncedCallback } from "use-debounce/lib";
 import { StockContext } from "../core/Stock";
 import { IFundamental } from "../../utils/types";
 import { round } from 'lodash';
+import { maxBy } from 'lodash';
 
 const sortEntries = (entries: IFundamental[]) => {
     return entries?.sort((a: IFundamental, b: IFundamental) => {
@@ -41,6 +42,13 @@ const filterFundamentals = (data: IFundamental[], entry: string, graphType: stri
     return results;
 }
 
+export const getMaxIgnoringOutliers = (ratesOfChange: RatesOfChange, outlierBoundary: number) => {
+    const max = maxBy(ratesOfChange, (num) => {
+        if (num.value > outlierBoundary) return 0;
+        return num.value;
+    });
+    return max.value;
+}
 
 const getYearsSinceListing = (data: IFundamental[]) => {
     if (!data?.length) return null;
@@ -51,17 +59,22 @@ const getYearsSinceListing = (data: IFundamental[]) => {
     return yearsBetween;
 }
 
+export type RatesOfChange = {
+    value: number,
+    itemStyle: { color: string },
+}[]
+
 export type ViewModelProps = [
     {
         dilutedEPSDates: string[],
         dilutedEPSValues: number[],
-        dilutedEPSRatesOfChange: any[],
+        dilutedEPSRatesOfChange: RatesOfChange,
         netIncomeDates: string[],
         netIncomeValues: number[],
-        netIncomeRatesOfChange: any[],
+        netIncomeRatesOfChange: RatesOfChange,
         revenueDates: string[],
         revenueValues: number[],
-        revenueRatesOfChange: any[],
+        revenueRatesOfChange: RatesOfChange,
         dilutedAvgSharesDates: string[],
         dilutedAvgSharesValues: number[],
         freeCashFlowDates: string[],
@@ -74,12 +87,16 @@ export type ViewModelProps = [
         yearsToFilter: number,
         referencePercentage: number,
         rateOfChangeVisible: boolean,
+        outlierBoundary: number,
+        ignoreOutliers: boolean,
     },
     (value: any) => void,
     (periodToSet: string) => void,
     (graphTypeToSet: string) => void, 
     (value: any) => void,
     (visibility: boolean) => void,
+    (outlierBoundaryToSet: number) => void,
+    (setIgnoreOutliers: boolean) => void,
 ]
 
 export function useFundamentalsViewModel(): ViewModelProps {
@@ -94,6 +111,8 @@ export function useFundamentalsViewModel(): ViewModelProps {
     const [periodFilterError, setPeriodFilterError] = useState(null);
     const [referencePercentage, setReferencePercentage] = useState(20);
     const [rateOfChangeVisible, setRateOfChangeVisibility] = useState(true);
+    const [outlierBoundary, setOutlierBoundary] = useState(null);
+    const [ignoreOutliers, setIgnoreOutliers] = useState(false)
     const [debouncedCallback] = useDebouncedCallback((value) => {
         if (value > maxYearsToFilter) {
             setPeriodFilterError(`Period must be max ${maxYearsToFilter}`);
@@ -108,6 +127,9 @@ export function useFundamentalsViewModel(): ViewModelProps {
     }, 1000);
     const [referenceLineDebounce] = useDebouncedCallback((value: number) => {
         setReferencePercentage(value);
+    }, 1000);
+    const [outlierBoundaryDebounce] = useDebouncedCallback((value) => {
+        setOutlierBoundary(value);
     }, 1000);
 
     const handleDataRetrieved = (data: any) => {
@@ -190,13 +212,17 @@ export function useFundamentalsViewModel(): ViewModelProps {
             periodFilterError,
             yearsToFilter,
             referencePercentage,
-            rateOfChangeVisible
+            rateOfChangeVisible,
+            outlierBoundary,
+            ignoreOutliers,
         },
         debouncedCallback,
         setGraphPeriod,
         setGraphType,
         referenceLineDebounce,
         setRateOfChangeVisibility,
+        outlierBoundaryDebounce,
+        setIgnoreOutliers,
     ]
 }
 
