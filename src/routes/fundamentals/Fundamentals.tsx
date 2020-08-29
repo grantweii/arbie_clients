@@ -6,6 +6,7 @@ import 'echarts/lib/component/title';
 import 'echarts/lib/chart/line';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/dataZoom';
+import 'echarts/lib/component/markLine';
 import { Spinner, Heading, Stack, Box, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Alert, AlertIcon } from "@chakra-ui/core";
 import Select from 'react-select';
 import * as styles from './Fundamentals.scss';
@@ -19,11 +20,12 @@ type EchartsProps = {
     graphType: string,
     title: string,
     lineColor?: string,
-    ratesOfChangeValues?: any[]
+    ratesOfChangeValues?: any[];
+    referencePercentage?: number;
 }
 
 const option = (props: EchartsProps) => {
-    const { dates, values, graphType, title, lineColor, ratesOfChangeValues } = props;
+    const { dates, values, graphType, title, lineColor, ratesOfChangeValues, referencePercentage } = props;
     const yAxisType = graphType === 'log' ? 'log' : 'value';
     const options: any = {
         title: {
@@ -72,12 +74,19 @@ const option = (props: EchartsProps) => {
             data: ratesOfChangeValues,
             type: 'bar',
             yAxisIndex: 1,
+            markLine: {
+                data: [
+                    {
+                        yAxis: referencePercentage,
+                    }
+                ],
+            }
         });
         options.yAxis.push({
+            name: '%',
             type: 'value'
         });
     }
-    console.log('options', options)
     return options;
 };
 
@@ -113,10 +122,12 @@ const Fundamentals: FC<any> = ({ children }) => {
             graphPeriod,
             periodFilterError,
             yearsToFilter,
+            referencePercentage,
         },
         debouncedCallback,
         setGraphPeriod,
-        setGraphType
+        setGraphType,
+        referenceLineDebounce,
     ] = useFundamentalsViewModel();
     const stock: IStock = useContext(StockContext);
 
@@ -126,7 +137,7 @@ const Fundamentals: FC<any> = ({ children }) => {
         <React.Fragment>
             <Stack spacing={8} isInline mb='4'>
                 <Box>
-                    <Heading as='h5' size="sm">Graph Type</Heading>
+                    <Heading as='h5' size="sm">Graph type</Heading>
                     <Select
                         value={{ label: graphType, value: graphType }}
                         onChange={(selected: any) => setGraphType(selected.value)}
@@ -135,7 +146,7 @@ const Fundamentals: FC<any> = ({ children }) => {
                     />
                 </Box>
                 <Box>
-                    <Heading as='h5' size="sm">Graph Period</Heading>
+                    <Heading as='h5' size="sm">Graph period</Heading>
                     <Select
                         value={{ label: graphPeriod, value: graphPeriod }}
                         onChange={(selected: any) => setGraphPeriod(selected.value)}
@@ -145,7 +156,7 @@ const Fundamentals: FC<any> = ({ children }) => {
                     />
                 </Box>
                 <Box>
-                    <Heading as='h5' size='sm'>Years To Show</Heading>
+                    <Heading as='h5' size='sm'>Years to show</Heading>
                     <NumberInput
                         defaultValue={yearsToFilter}
                         min={3} max={yearsToFilter}
@@ -167,6 +178,22 @@ const Fundamentals: FC<any> = ({ children }) => {
                         </Alert>
                     }
                 </Box>
+                <Box>
+                    <Heading as='h5' size='sm'>Reference line</Heading>
+                    <NumberInput
+                        defaultValue={referencePercentage}
+                        size='md'
+                        width={200}
+                        onChange={referenceLineDebounce}
+                        className={styles.graphTypeSelect}
+                        my='2'>
+                        <NumberInputField />
+                        <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                        </NumberInputStepper>
+                    </NumberInput>
+                </Box>
             </Stack>
             <div className={styles.grid}>
                 <ReactEchartsCore
@@ -177,10 +204,12 @@ const Fundamentals: FC<any> = ({ children }) => {
                         graphType,
                         title: 'Net Income',
                         lineColor: 'red',
-                        ratesOfChangeValues: netIncomeRatesOfChange
+                        ratesOfChangeValues: netIncomeRatesOfChange,
+                        referencePercentage,
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
+                    style={{ height: '400px' }}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
@@ -190,10 +219,12 @@ const Fundamentals: FC<any> = ({ children }) => {
                         graphType,
                         title: 'EPS',
                         lineColor: 'blue',
-                        ratesOfChangeValues: dilutedEPSRatesOfChange
+                        ratesOfChangeValues: dilutedEPSRatesOfChange,
+                        referencePercentage
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
+                    style={{ height: '400px' }}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
@@ -204,9 +235,11 @@ const Fundamentals: FC<any> = ({ children }) => {
                         title: 'Total Revenue',
                         lineColor: 'gray',
                         ratesOfChangeValues: revenueRatesOfChange,
+                        referencePercentage,
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
+                    style={{ height: '400px' }}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
@@ -219,6 +252,7 @@ const Fundamentals: FC<any> = ({ children }) => {
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
+                    style={{ height: '400px' }}
                 />
                 <ReactEchartsCore
                     echarts={echarts}
@@ -231,6 +265,7 @@ const Fundamentals: FC<any> = ({ children }) => {
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
+                    style={{ height: '400px' }}
                 />
             </div>
             {children}

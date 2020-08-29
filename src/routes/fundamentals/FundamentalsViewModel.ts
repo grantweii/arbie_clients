@@ -72,10 +72,12 @@ export type ViewModelProps = [
         graphPeriod: string,
         periodFilterError: string,
         yearsToFilter: number,
+        referencePercentage: number,
     },
     (value: any) => void,
     (periodToSet: string) => void,
     (graphTypeToSet: string) => void, 
+    (value: any) => void,
 ]
 
 export function useFundamentalsViewModel(): ViewModelProps {
@@ -88,6 +90,7 @@ export function useFundamentalsViewModel(): ViewModelProps {
     const [maxYearsToFilter, setMaxYearsToFilter] = useState(null);
     const [yearsToFilter, setYearsToFilter] = useState(null);
     const [periodFilterError, setPeriodFilterError] = useState(null);
+    const [referencePercentage, setReferencePercentage] = useState(20);
     const [debouncedCallback] = useDebouncedCallback((value) => {
         if (value > maxYearsToFilter) {
             setPeriodFilterError(`Period must be max ${maxYearsToFilter}`);
@@ -99,6 +102,9 @@ export function useFundamentalsViewModel(): ViewModelProps {
         }
         setPeriodFilterError(null);
         setYearsToFilter(value);
+    }, 1000);
+    const [referenceLineDebounce] = useDebouncedCallback((value: number) => {
+        setReferencePercentage(value);
     }, 1000);
 
     const handleDataRetrieved = (data: any) => {
@@ -180,10 +186,12 @@ export function useFundamentalsViewModel(): ViewModelProps {
             graphPeriod,
             periodFilterError,
             yearsToFilter,
+            referencePercentage,
         },
         debouncedCallback,
         setGraphPeriod,
-        setGraphType
+        setGraphType,
+        referenceLineDebounce,
     ]
 }
 
