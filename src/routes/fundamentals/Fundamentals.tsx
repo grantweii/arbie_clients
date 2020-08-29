@@ -5,6 +5,7 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/chart/line';
 import 'echarts/lib/chart/bar';
+import 'echarts/lib/component/dataZoom';
 import { Spinner, Heading, Stack, Box, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Alert, AlertIcon } from "@chakra-ui/core";
 import Select from 'react-select';
 import * as styles from './Fundamentals.scss';
@@ -41,6 +42,19 @@ const option = (props: EchartsProps) => {
             {
                 type: yAxisType,
             },
+        ],
+        dataZoom: [
+            {
+                type: 'inside',
+                start: 0,
+                end: 100
+            },
+            {
+                show: true,
+                type: 'slider',
+                start: 0,
+                end: 100
+            }
         ],
         series: [
             {
