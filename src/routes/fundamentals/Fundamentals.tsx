@@ -98,10 +98,6 @@ const option = (props: EchartsProps) => {
         },
     };
     if (rateOfChangeVisible && ratesOfChangeValues) {
-        let max;
-        if (ignoreOutliers && outlierBoundary) {
-            max = getMaxIgnoringOutliers(ratesOfChangeValues, outlierBoundary);
-        }
         options.series.push({
             data: ratesOfChangeValues,
             type: 'bar',
@@ -117,7 +113,8 @@ const option = (props: EchartsProps) => {
         options.yAxis.push({
             name: '%',
             type: 'value',
-            max,
+            max: ignoreOutliers && outlierBoundary || null,
+            min: ignoreOutliers && -outlierBoundary || null,
         });
     }
     return options;
@@ -153,14 +150,11 @@ const Fundamentals: FC<any> = ({ children }) => {
             cashflowData,
             graphType,
             graphPeriod,
-            periodFilterError,
-            yearsToFilter,
             referencePercentage,
             rateOfChangeVisible,
             outlierBoundary,
             ignoreOutliers
         },
-        debouncedCallback,
         setGraphPeriod,
         setGraphType,
         referenceLineDebounce,
@@ -170,7 +164,7 @@ const Fundamentals: FC<any> = ({ children }) => {
     ] = useFundamentalsViewModel();
     const stock: IStock = useContext(StockContext);
 
-    if (!financialData?.length || !cashflowData?.length || !yearsToFilter) return <Spinner />
+    if (!financialData?.length || !cashflowData?.length) return <Spinner />
 
     return (
         <React.Fragment>
@@ -193,28 +187,6 @@ const Fundamentals: FC<any> = ({ children }) => {
                         isOptionDisabled={(option) => option.value === 'quarterly' && stock.exchange === Exchange.ASX}
                         className={styles.graphTypeSelect}
                     />
-                </Stack>
-                <Stack spacing={2}>
-                    <Heading as='h5' size='sm'>Years to show</Heading>
-                    <NumberInput
-                        defaultValue={yearsToFilter}
-                        min={3} max={yearsToFilter}
-                        size='md'
-                        width={200}
-                        onChange={debouncedCallback}
-                        className={styles.graphTypeSelect}>
-                        <NumberInputField />
-                        <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                        </NumberInputStepper>
-                    </NumberInput>
-                    {periodFilterError &&
-                        <Alert status='error' width='200px'>
-                            <AlertIcon />
-                            {periodFilterError}
-                        </Alert>
-                    }
                 </Stack>
                 <Stack spacing={2}>
                     <Heading as='h5' size='sm'>Reference line</Heading>

@@ -7,7 +7,7 @@ import { useDebouncedCallback } from "use-debounce/lib";
 import { StockContext } from "../core/Stock";
 import { IFundamental } from "../../utils/types";
 import { round } from 'lodash';
-import { maxBy } from 'lodash';
+// import { maxBy, minBy } from 'lodash';
 
 const sortEntries = (entries: IFundamental[]) => {
     return entries?.sort((a: IFundamental, b: IFundamental) => {
@@ -42,13 +42,17 @@ const filterFundamentals = (data: IFundamental[], entry: string, graphType: stri
     return results;
 }
 
-export const getMaxIgnoringOutliers = (ratesOfChange: RatesOfChange, outlierBoundary: number) => {
-    const max = maxBy(ratesOfChange, (num) => {
-        if (num.value > outlierBoundary) return 0;
-        return num.value;
-    });
-    return max.value;
-}
+// export const getMaxIgnoringOutliers = (ratesOfChange: RatesOfChange, outlierBoundary: number) => {
+//     const max = maxBy(ratesOfChange, (num) => {
+//         if (num.value > outlierBoundary) return 0;
+//         return num.value;
+//     });
+//     const min = minBy(ratesOfChange, (num) => {
+//         if (num.value < -outlierBoundary) return 0;
+//         return num.value;
+//     });
+//     return { max: max.value, min: min.value };
+// }
 
 const getYearsSinceListing = (data: IFundamental[]) => {
     if (!data?.length) return null;
@@ -83,14 +87,11 @@ export type ViewModelProps = [
         cashflowData: IFundamental[],
         graphType: string,
         graphPeriod: string,
-        periodFilterError: string,
-        yearsToFilter: number,
         referencePercentage: number,
         rateOfChangeVisible: boolean,
         outlierBoundary: number,
         ignoreOutliers: boolean,
     },
-    (value: any) => void,
     (periodToSet: string) => void,
     (graphTypeToSet: string) => void, 
     (value: any) => void,
@@ -108,23 +109,10 @@ export function useFundamentalsViewModel(): ViewModelProps {
     const [graphPeriod, setGraphPeriod] = useState('annual');
     const [maxYearsToFilter, setMaxYearsToFilter] = useState(null);
     const [yearsToFilter, setYearsToFilter] = useState(null);
-    const [periodFilterError, setPeriodFilterError] = useState(null);
     const [referencePercentage, setReferencePercentage] = useState(20);
     const [rateOfChangeVisible, setRateOfChangeVisibility] = useState(true);
     const [outlierBoundary, setOutlierBoundary] = useState(null);
     const [ignoreOutliers, setIgnoreOutliers] = useState(false)
-    const [debouncedCallback] = useDebouncedCallback((value) => {
-        if (value > maxYearsToFilter) {
-            setPeriodFilterError(`Period must be max ${maxYearsToFilter}`);
-            return;
-        }
-        if (value < 3) {
-            setPeriodFilterError(`Period must be min 3`);
-            return;
-        }
-        setPeriodFilterError(null);
-        setYearsToFilter(value);
-    }, 1000);
     const [referenceLineDebounce] = useDebouncedCallback((value: number) => {
         setReferencePercentage(value);
     }, 1000);
@@ -209,14 +197,11 @@ export function useFundamentalsViewModel(): ViewModelProps {
             cashflowData,
             graphType,
             graphPeriod,
-            periodFilterError,
-            yearsToFilter,
             referencePercentage,
             rateOfChangeVisible,
             outlierBoundary,
             ignoreOutliers,
         },
-        debouncedCallback,
         setGraphPeriod,
         setGraphType,
         referenceLineDebounce,
