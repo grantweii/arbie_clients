@@ -23,20 +23,7 @@ const Stock: FC<any> = ({ children }) => {
                 <Heading as="h5" size="sm">{stock?.ticker}, {stock?.exchange}</Heading>
                 <Heading as='h5' size='sm'>{stock?.sector}, {stock?.industry}</Heading>
             </div>
-            <Tabs>
-                <TabList mb={4}>
-                    <Tab>Core</Tab>
-                    <Tab>Discover</Tab>
-                </TabList>
-                <TabPanels>
-                    <TabPanel>
-                        <Fundamentals/>
-                    </TabPanel>
-                    <TabPanel>
-                        Dictionary
-                    </TabPanel>
-                </TabPanels>
-            </Tabs>
+            {children}
         </StockContext.Provider>
     )
 }

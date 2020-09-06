@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useRouteNode, Link } from 'react-router5';
 import { Tabs, TabList, Tab, TabPanels, TabPanel, Flex, Box, Button, Stack } from '@chakra-ui/core';
 import SearchIcon from '../../assets/search.svg';
+import GlobeIcon from '../../assets/globe.svg';
 import * as styles from './RootStyles.scss';
 import { mergeClasses } from '../../utils/utils';
 
@@ -20,7 +21,7 @@ const links: ILink[] = [
     {
         label: 'Discover',
         routeName: 'root.discover',
-        icon: <SearchIcon/>
+        icon: <GlobeIcon/>
     }
 ]
 
