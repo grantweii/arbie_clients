@@ -1,11 +1,11 @@
-import { getAnnualFinancial, getQuarterlyFinancial, getAnnualCashflow, getQuarterlyCashflow } from "../dashboard/DashboardActions";
+import { getAnnualFinancial, getQuarterlyFinancial, getAnnualCashflow, getQuarterlyCashflow } from '../search/SearchActions';
 import moment from 'moment';
-import { useRouteNode } from "react-router5";
-import { useQuery } from "react-query";
-import { useState, useContext } from "react";
-import { useDebouncedCallback } from "use-debounce/lib";
-import { StockContext } from "../core/Stock";
-import { IFundamental } from "../../utils/types";
+import { useRouteNode } from 'react-router5';
+import { useQuery } from 'react-query';
+import { useState, useContext } from 'react';
+import { useDebouncedCallback } from 'use-debounce/lib';
+import { StockContext } from './Stock';
+import { IFundamental } from '../../utils/types';
 import { round } from 'lodash';
 // import { maxBy, minBy } from 'lodash';
 
@@ -34,7 +34,7 @@ const filterFundamentals = (data: IFundamental[], entry: string, graphType: stri
             const first = parseFloat(sortedEntries[i].value);
             const second = parseFloat(sortedEntries[i+1].value);
             const pcntChange = round(((second - first) / first) * 100, 2);
-            const color = pcntChange > 0 ? '#85D054' : '#D05454';
+            const color = pcntChange > 0 ? '#2CC96D' : '#E02900';
             pcntChanges.push({ value: pcntChange, itemStyle: { color } });
         }
         results.ratesOfChange = pcntChanges;

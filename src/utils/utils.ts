@@ -13,3 +13,7 @@ export const hasQueryErrored = (status: QueryStatus) => {
 export const hasQuerySucceeded = (status: QueryStatus) => {
     return status === 'success';
 }
+
+export const mergeClasses = (...classNames: any) => {
+    return classNames.join(' ');
+}

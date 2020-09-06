@@ -1,0 +1,27 @@
+@import '../../styles/common.scss';
+
+.link {
+    padding: 24px;
+    font-weight: 600;
+    color: white;
+
+    &:hover {
+        opacity: 0.5;
+    }
+
+}
+
+.activeLink {
+    background-color: #3E3E7A;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 24px;
+}
+
+.sidenav {
+    background-color: $purple-900;
+    z-index: 10;
+}

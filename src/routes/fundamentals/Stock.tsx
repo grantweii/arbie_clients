@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
 import { useRouteNode } from 'react-router5';
 import { useQuery } from 'react-query';
-import { getStock } from '../dashboard/DashboardActions';
+import { getStock } from '../search/SearchActions';
 import { Heading, Divider, Tab, TabList, Tabs, TabPanels, TabPanel, Spinner } from "@chakra-ui/core";
-import Fundamentals from '../fundamentals/Fundamentals';
+import Fundamentals from './Fundamentals';
 import { isQueryLoading } from '../../utils/utils';
 
 export const StockContext = React.createContext(null);
 
 const Stock: FC<any> = ({ children }) => {
-    const { route } = useRouteNode('stock.id');
+    const { route } = useRouteNode('root.stock.id');
     const { params } = route;
     const { data: stock, isLoading } = useQuery(['stocks', { id: params.id }], getStock, { staleTime: 60 * 1000 * 10 });
 
@@ -21,11 +21,12 @@ const Stock: FC<any> = ({ children }) => {
                 <Divider/>
                 <Heading>{stock?.name}</Heading>
                 <Heading as="h5" size="sm">{stock?.ticker}, {stock?.exchange}</Heading>
+                <Heading as='h5' size='sm'>{stock?.sector}, {stock?.industry}</Heading>
             </div>
             <Tabs>
                 <TabList mb={4}>
                     <Tab>Core</Tab>
-                    <Tab>Dictionary</Tab>
+                    <Tab>Discover</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>

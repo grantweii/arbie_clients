@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { useRouteNode } from 'react-router5';
+import { useRouteNode, withRoute } from 'react-router5';
 import { State as RouterState } from 'router5';
 
 import routes from '../router/routes';
@@ -7,6 +7,7 @@ import { keyBy } from 'lodash';
 
 type RouteRendererProps = {
     routes?: any;
+    route?: any;
 }
 
 type RouteTree = {
@@ -38,10 +39,8 @@ const renderTree = (node: any, routes: string[]) => {
     )
 }
 
-const RouteRenderer: FC<RouteRendererProps> = ({ routes }) => {
-    const { route } = useRouteNode('');
+const RouteRenderer: FC<RouteRendererProps> = ({ routes, route }) => {
     const routeArray = route?.name?.split('.');
-
     const rootName = routeArray[0];
     const rootNode = routes[rootName];
 
@@ -58,9 +57,11 @@ const RouteRenderer: FC<RouteRendererProps> = ({ routes }) => {
     );
 }
 
+const RouteRendererWithRoute = withRoute(RouteRenderer);
+
 const AppLayout: FC<any> = (props) => {
     const keyedRoutes = useMemo(() => keyBy(routes, 'name'), []);
-    return <RouteRenderer routes={keyedRoutes} />
+    return <RouteRendererWithRoute routes={keyedRoutes} />
 }
 
 export default AppLayout;

@@ -8,7 +8,6 @@ export default function configureRouter() {
         defaultRoute: 'stock',
     });
     router.usePlugin(loggerPlugin);
-
     router.usePlugin(browserPlugin());
 
     return router;

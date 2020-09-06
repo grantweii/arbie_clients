@@ -24,9 +24,10 @@ import {
 } from "@chakra-ui/core";
 import Select from 'react-select';
 import * as styles from './Fundamentals.scss';
-import { StockContext } from '../core/Stock';
+import { StockContext } from './Stock';
 import { IStock, Exchange } from '../../utils/types';
-import useFundamentalsViewModel, { getMaxIgnoringOutliers, RatesOfChange } from './FundamentalsViewModel';
+import useFundamentalsViewModel, { RatesOfChange } from './FundamentalsViewModel';
+import { useRouteNode } from 'react-router5';
 
 type EchartsProps = {
     dates: string[],
@@ -162,6 +163,7 @@ const Fundamentals: FC<any> = ({ children }) => {
         outlierBoundaryDebounce,
         setIgnoreOutliers,
     ] = useFundamentalsViewModel();
+    const { route } = useRouteNode('root.stock.id.fundamentals');
     const stock: IStock = useContext(StockContext);
 
     if (!financialData?.length || !cashflowData?.length) return <Spinner />

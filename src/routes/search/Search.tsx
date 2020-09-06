@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { useRouteNode, useRouter, useRoute } from 'react-router5';
 import { useQuery } from 'react-query';
-import { getStocks, searchStocks, getStock } from './DashboardActions';
+import { getStocks, searchStocks, getStock } from './SearchActions';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
-import * as styles from './DashboardStyles.scss';
+import * as styles from './SearchStyles.scss';
 import { IStock } from '../../utils/types';
 import { Spinner } from '@chakra-ui/core';
 
@@ -20,8 +20,8 @@ type SelectOption = {
     value: any;
 }
 
-const Dashboard: FC<any> = ({ children }) => {
-    const { route, router } = useRouteNode('dashboard');
+const Search: FC<any> = ({ children }) => {
+    const { route, router } = useRouteNode('root.stock');
     const { params } = route;
 
     const { data: stock, isLoading } = useQuery(['stocks', { id: params.id }], getStock, {
@@ -39,7 +39,7 @@ const Dashboard: FC<any> = ({ children }) => {
     const debouncedLoadOptions = debounce(loadOptions, 1000);
 
     const handleEntrySelected = (input: SelectOption) => {
-        router.navigate('stock.id', { id: input.value }, { reload: true });
+        router.navigate('root.stock.id', { id: input.value }, { reload: true });
     }
 
     if (params.id && isLoading) return <Spinner/>
@@ -63,4 +63,4 @@ const Dashboard: FC<any> = ({ children }) => {
     );
 }
 
-export default Dashboard;
+export default Search;
