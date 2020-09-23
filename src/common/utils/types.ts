@@ -3,6 +3,8 @@ export interface IStock {
     ticker: string;
     exchange: string;
     name: string;
+    industry: string;
+    sector: string;
 }
 
 export interface IFundamental {

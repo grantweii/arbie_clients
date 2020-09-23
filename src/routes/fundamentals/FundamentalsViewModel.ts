@@ -1,13 +1,12 @@
-import { getAnnualFinancial, getQuarterlyFinancial, getAnnualCashflow, getQuarterlyCashflow } from '../search/SearchActions';
+import { getAnnualFinancial, getQuarterlyFinancial, getAnnualCashflow, getQuarterlyCashflow } from './FundamentalsActions';
 import moment from 'moment';
 import { useRouteNode } from 'react-router5';
 import { useQuery } from 'react-query';
 import { useState, useContext } from 'react';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { StockContext } from './Stock';
-import { IFundamental } from '../../utils/types';
+import { IFundamental } from '../../common/utils/types';
 import { round } from 'lodash';
-// import { maxBy, minBy } from 'lodash';
 
 const sortEntries = (entries: IFundamental[]) => {
     return entries?.sort((a: IFundamental, b: IFundamental) => {
@@ -33,7 +32,7 @@ const filterFundamentals = (data: IFundamental[], entry: string, graphType: stri
         for (let i = 0; i < sortedEntries?.length - 1; i++) {
             const first = parseFloat(sortedEntries[i].value);
             const second = parseFloat(sortedEntries[i+1].value);
-            const pcntChange = round(((second - first) / first) * 100, 2);
+            const pcntChange = round(((second - first) / Math.abs(first)) * 100, 2);
             const color = pcntChange > 0 ? '#2CC96D' : '#E02900';
             pcntChanges.push({ value: pcntChange, itemStyle: { color } });
         }
@@ -41,18 +40,6 @@ const filterFundamentals = (data: IFundamental[], entry: string, graphType: stri
     }
     return results;
 }
-
-// export const getMaxIgnoringOutliers = (ratesOfChange: RatesOfChange, outlierBoundary: number) => {
-//     const max = maxBy(ratesOfChange, (num) => {
-//         if (num.value > outlierBoundary) return 0;
-//         return num.value;
-//     });
-//     const min = minBy(ratesOfChange, (num) => {
-//         if (num.value < -outlierBoundary) return 0;
-//         return num.value;
-//     });
-//     return { max: max.value, min: min.value };
-// }
 
 const getYearsSinceListing = (data: IFundamental[]) => {
     if (!data?.length) return null;
@@ -68,39 +55,37 @@ export type RatesOfChange = {
     itemStyle: { color: string },
 }[]
 
-export type ViewModelProps = [
-    {
-        dilutedEPSDates: string[],
-        dilutedEPSValues: number[],
-        dilutedEPSRatesOfChange: RatesOfChange,
-        netIncomeDates: string[],
-        netIncomeValues: number[],
-        netIncomeRatesOfChange: RatesOfChange,
-        revenueDates: string[],
-        revenueValues: number[],
-        revenueRatesOfChange: RatesOfChange,
-        dilutedAvgSharesDates: string[],
-        dilutedAvgSharesValues: number[],
-        freeCashFlowDates: string[],
-        freeCashFlowValues: number[],
-        financialData: IFundamental[],
-        cashflowData: IFundamental[],
-        graphType: string,
-        graphPeriod: string,
-        referencePercentage: number,
-        rateOfChangeVisible: boolean,
-        outlierBoundary: number,
-        ignoreOutliers: boolean,
-    },
-    (periodToSet: string) => void,
-    (graphTypeToSet: string) => void, 
-    (value: any) => void,
-    (visibility: boolean) => void,
-    (outlierBoundaryToSet: number) => void,
-    (setIgnoreOutliers: boolean) => void,
-]
+export type FundamentalsViewModel = {
+    dilutedEPSDates: string[],
+    dilutedEPSValues: number[],
+    dilutedEPSRatesOfChange: RatesOfChange,
+    netIncomeDates: string[],
+    netIncomeValues: number[],
+    netIncomeRatesOfChange: RatesOfChange,
+    revenueDates: string[],
+    revenueValues: number[],
+    revenueRatesOfChange: RatesOfChange,
+    dilutedAvgSharesDates: string[],
+    dilutedAvgSharesValues: number[],
+    freeCashFlowDates: string[],
+    freeCashFlowValues: number[],
+    financialData: IFundamental[],
+    cashflowData: IFundamental[],
+    graphType: string,
+    graphPeriod: string,
+    referencePercentage: number,
+    rateOfChangeVisible: boolean,
+    outlierBoundary: number,
+    ignoreOutliers: boolean,
+    setGraphPeriod: (periodToSet: string) => void,
+    setGraphType: (graphTypeToSet: string) => void,
+    referenceLineDebounce: (value: any) => void,
+    setRateOfChangeVisibility: (visibility: boolean) => void,
+    outlierBoundaryDebounce: (outlierBoundaryToSet: number) => void,
+    setIgnoreOutliers: (setIgnoreOutliers: boolean) => void,
+}
 
-export function useFundamentalsViewModel(): ViewModelProps {
+export function useFundamentalsViewModel(): FundamentalsViewModel {
     
     const { route } = useRouteNode('stock.id.fundamentals');
     const { params } = route;
@@ -178,37 +163,35 @@ export function useFundamentalsViewModel(): ViewModelProps {
     } = filterFundamentals(cashflowData, 'free_cash_flow', 'linear', yearsToFilter);
 
 
-    return [
-        {
-            dilutedEPSDates,
-            dilutedEPSValues,
-            dilutedEPSRatesOfChange,
-            netIncomeDates,
-            netIncomeValues,
-            netIncomeRatesOfChange,
-            revenueDates,
-            revenueValues,
-            revenueRatesOfChange,
-            dilutedAvgSharesDates,
-            dilutedAvgSharesValues,
-            freeCashFlowDates,
-            freeCashFlowValues,
-            financialData,
-            cashflowData,
-            graphType,
-            graphPeriod,
-            referencePercentage,
-            rateOfChangeVisible,
-            outlierBoundary,
-            ignoreOutliers,
-        },
+    return {
+        dilutedEPSDates,
+        dilutedEPSValues,
+        dilutedEPSRatesOfChange,
+        netIncomeDates,
+        netIncomeValues,
+        netIncomeRatesOfChange,
+        revenueDates,
+        revenueValues,
+        revenueRatesOfChange,
+        dilutedAvgSharesDates,
+        dilutedAvgSharesValues,
+        freeCashFlowDates,
+        freeCashFlowValues,
+        financialData,
+        cashflowData,
+        graphType,
+        graphPeriod,
+        referencePercentage,
+        rateOfChangeVisible,
+        outlierBoundary,
+        ignoreOutliers,
         setGraphPeriod,
         setGraphType,
         referenceLineDebounce,
         setRateOfChangeVisibility,
         outlierBoundaryDebounce,
         setIgnoreOutliers,
-    ]
+    }
 }
 
 export default useFundamentalsViewModel;

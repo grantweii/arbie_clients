@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { useRouteNode, Link } from 'react-router5';
 import { Tabs, TabList, Tab, TabPanels, TabPanel, Flex, Box, Button, Stack } from '@chakra-ui/core';
-import SearchIcon from '../../assets/search.svg';
-import GlobeIcon from '../../assets/globe.svg';
+import SearchIcon from '../../common/assets/search.svg';
+import GlobeIcon from '../../common/assets/globe.svg';
 import * as styles from './RootStyles.scss';
-import { mergeClasses } from '../../utils/utils';
+import { mergeClasses } from '../../common/utils/utils';
 
 type ILink = {
     label: string;
@@ -25,11 +25,11 @@ const links: ILink[] = [
     }
 ]
 
-const getLinks = (link: ILink, currentRoute: string) => {
+const getLinks = (link: ILink, currentRoute: string, index: number) => {
     const currentActive = currentRoute.includes(link.routeName);
     const linkStyle = mergeClasses(styles.link, currentActive && styles.activeLink);
     return (
-        <Link routeName={link.routeName} className={linkStyle}>
+        <Link key={`link-${index}`} routeName={link.routeName} className={linkStyle}>
             <Flex direction='row'>
                 <Box className={styles.icon}>{link.icon}</Box>
                 {link.label}
@@ -40,7 +40,7 @@ const getLinks = (link: ILink, currentRoute: string) => {
 
 
 const Sidenav: FC<any> = ({ children, route }: any) => {
-    const navigationLinks = links.map((link) => getLinks(link, route?.name));
+    const navigationLinks = links.map((link, index) => getLinks(link, route?.name, index));
     return (
         <Flex position='fixed' height='100%' direction='column' className={styles.sidenav}>
             {navigationLinks}

@@ -25,7 +25,7 @@ import {
 import Select from 'react-select';
 import * as styles from './Fundamentals.scss';
 import { StockContext } from './Stock';
-import { IStock, Exchange } from '../../utils/types';
+import { IStock, Exchange } from '../../common/utils/types';
 import useFundamentalsViewModel, { RatesOfChange } from './FundamentalsViewModel';
 import { useRouteNode } from 'react-router5';
 
@@ -132,37 +132,35 @@ const graphPeriodOptions = [
 ]
 
 const Fundamentals: FC<any> = ({ children }) => {
-    const [
-        {
-            dilutedEPSDates,
-            dilutedEPSValues,
-            dilutedEPSRatesOfChange,
-            netIncomeDates,
-            netIncomeValues,
-            netIncomeRatesOfChange,
-            revenueDates,
-            revenueValues,
-            revenueRatesOfChange,
-            dilutedAvgSharesDates,
-            dilutedAvgSharesValues,
-            freeCashFlowDates,
-            freeCashFlowValues,
-            financialData,
-            cashflowData,
-            graphType,
-            graphPeriod,
-            referencePercentage,
-            rateOfChangeVisible,
-            outlierBoundary,
-            ignoreOutliers
-        },
+    const {
+        dilutedEPSDates,
+        dilutedEPSValues,
+        dilutedEPSRatesOfChange,
+        netIncomeDates,
+        netIncomeValues,
+        netIncomeRatesOfChange,
+        revenueDates,
+        revenueValues,
+        revenueRatesOfChange,
+        dilutedAvgSharesDates,
+        dilutedAvgSharesValues,
+        freeCashFlowDates,
+        freeCashFlowValues,
+        financialData,
+        cashflowData,
+        graphType,
+        graphPeriod,
+        referencePercentage,
+        rateOfChangeVisible,
+        outlierBoundary,
+        ignoreOutliers,
         setGraphPeriod,
         setGraphType,
         referenceLineDebounce,
         setRateOfChangeVisibility,
         outlierBoundaryDebounce,
         setIgnoreOutliers,
-    ] = useFundamentalsViewModel();
+    } = useFundamentalsViewModel();
     const { route } = useRouteNode('root.stock.id.fundamentals');
     const stock: IStock = useContext(StockContext);
 
@@ -174,7 +172,7 @@ const Fundamentals: FC<any> = ({ children }) => {
                 <Stack spacing={2}>
                     <Heading as='h5' size="sm">Graph type</Heading>
                     <Select
-                        value={{ label: graphType, value: graphType }}
+                        value={graphType && { label: graphType, value: graphType }}
                         onChange={(selected: any) => setGraphType(selected.value)}
                         options={graphTypeOptions}
                         className={styles.graphTypeSelect}
@@ -183,7 +181,7 @@ const Fundamentals: FC<any> = ({ children }) => {
                 <Stack spacing={2}>
                     <Heading as='h5' size="sm">Graph period</Heading>
                     <Select
-                        value={{ label: graphPeriod, value: graphPeriod }}
+                        value={graphPeriod && { label: graphPeriod, value: graphPeriod }}
                         onChange={(selected: any) => setGraphPeriod(selected.value)}
                         options={graphPeriodOptions}
                         isOptionDisabled={(option) => option.value === 'quarterly' && stock.exchange === Exchange.ASX}

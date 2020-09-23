@@ -1,7 +1,4 @@
-import bent, { NodeResponse } from 'bent';
-
-export const get = bent('http://127.0.0.1:5000', 'GET', 'json', 200) as any;
-export const post = bent('http://127.0.0.1:5000', 'POST', 'json', 200) as any;
+import { get } from '../../common/utils/utils';
 
 export const getStocks = async () => {
     const response = await get('/stocks');
@@ -10,16 +7,6 @@ export const getStocks = async () => {
 
 export const searchStocks = async (ticker: string) => {
     const response = await get(`/stocks/search?ticker=${ticker}`);
-    return response.result;
-}
-
-export const getAnnualFinancial = async (key: any, { stock_id, fields }: any) => {
-    const response = await get(`/annual-financials?stock_id=${stock_id}&fields=${fields}`);
-    return response.result;
-}
-
-export const getQuarterlyFinancial = async (key: any, { stock_id, fields }: any) => {
-    const response = await get(`/quarterly-financials?stock_id=${stock_id}&fields=${fields}`);
     return response.result;
 }
 
@@ -38,12 +25,7 @@ export const getMajorHolders = async (key: any, { stock_id }: any) => {
     return response.result;
 }
 
-export const getAnnualCashflow = async (key: any, { stock_id, fields }: any) => {
-    const response = await get(`/annual-financials/cashflow?stock_id=${stock_id}&fields=${fields}`);
-    return response.result;
-}
-
-export const getQuarterlyCashflow = async (key: any, { stock_id, fields }: any) => {
-    const response = await get(`/quarterly-financials/cashflow?stock_id=${stock_id}&fields=${fields}`);
+export const getStockPrice = async (key: any, { id }: any) => {
+    const response = await get(`/stocks/${id}/price`);
     return response.result;
 }

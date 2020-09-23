@@ -1,0 +1,28 @@
+@import './common.scss';
+
+.button {
+    border-radius: 0.25rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 250ms;
+    line-height: 1.25;
+    font-size: 1rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: $purple-500;
+    color: white;
+    position: relative;
+    white-space: nowrap;
+
+    &:hover {
+        background-color: $purple-600;
+    }
+}
+
+.loading {
+    opacity: 0;
+}

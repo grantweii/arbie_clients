@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { useRouteNode, Link } from 'react-router5';
 import { Flex, Box } from '@chakra-ui/core';
 import Search from '../search/Search';
-import Arbie from '../../assets/arbie.svg';
+import Arbie from '../../common/assets/arbie.svg';
 import Sidebar from './Sidenav';
 
 

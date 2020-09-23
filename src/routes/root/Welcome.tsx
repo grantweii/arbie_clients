@@ -3,7 +3,7 @@ import { useRouteNode } from 'react-router5';
 import { Tabs, TabList, Tab, TabPanels, TabPanel, Flex, Box, Heading } from '@chakra-ui/core';
 import Search from '../search/Search';
 import * as styles from './arbie.scss';
-import Arbie from '../../assets/arbie.svg';
+import Arbie from '../../common/assets/arbie.svg';
 
 const welcomeMessages = [
     'Arbie says hi!',

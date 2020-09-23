@@ -1,17 +1,19 @@
 import React, { FC } from 'react';
 import { useRouteNode } from 'react-router5';
 import { useQuery } from 'react-query';
-import { getStock } from '../search/SearchActions';
+import { getStock, getStockPrice } from '../search/SearchActions';
 import { Heading, Divider, Tab, TabList, Tabs, TabPanels, TabPanel, Spinner } from "@chakra-ui/core";
 import Fundamentals from './Fundamentals';
-import { isQueryLoading } from '../../utils/utils';
+import { isQueryLoading } from '../../common/utils/utils';
 
 export const StockContext = React.createContext(null);
 
 const Stock: FC<any> = ({ children }) => {
     const { route } = useRouteNode('root.stock.id');
     const { params } = route;
-    const { data: stock, isLoading } = useQuery(['stocks', { id: params.id }], getStock, { staleTime: 60 * 1000 * 10 });
+    const { data: stock, isLoading } = useQuery(['stock', { id: params.id }], getStock, { staleTime: 60 * 1000 * 10 });
+
+    const { data: stockPrice } = useQuery(['stockPrice', { id: params.id }], getStockPrice, { staleTime: 60 * 1000 * 10 });
 
     if (isLoading) return <Spinner/> 
 

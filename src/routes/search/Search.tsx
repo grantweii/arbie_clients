@@ -5,7 +5,7 @@ import { getStocks, searchStocks, getStock } from './SearchActions';
 import AsyncSelect from 'react-select/async';
 import debounce from 'debounce-promise';
 import * as styles from './SearchStyles.scss';
-import { IStock } from '../../utils/types';
+import { IStock } from '../../common/utils/types';
 import { Spinner } from '@chakra-ui/core';
 
 const mapFilteredStocks = (stocks: IStock[]): SelectOption[] => {
