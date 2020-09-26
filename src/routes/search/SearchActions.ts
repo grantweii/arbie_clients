@@ -24,8 +24,3 @@ export const getMajorHolders = async (key: any, { stock_id }: any) => {
     const response = await get(`/stocks/${stock_id}/major-holders`);
     return response.result;
 }
-
-export const getStockPrice = async (key: any, { id }: any) => {
-    const response = await get(`/stocks/${id}/price`);
-    return response.result;
-}

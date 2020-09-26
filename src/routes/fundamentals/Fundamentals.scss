@@ -1,3 +1,5 @@
+@import '../../common/styles/common.scss';
+
 .graphTypeSelect {
     width: 200px;
 }
@@ -8,5 +10,14 @@
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
         grid-row-gap: 2rem;
+    }
+}
+
+.collapseButton {
+    cursor: pointer;
+    color: $purple-500;
+    
+    &:hover {
+        color: $purple-300;
     }
 }
