@@ -35,22 +35,30 @@ const Stock: FC<any> = ({ children }) => {
                     <Stack isInline spacing={12}>
                         <Heading>{stock?.name}</Heading>
                         <Stat>
-                            <StatNumber>
-                                {stock?.close}
-                            </StatNumber>
-                            <StatHelpText>
-                                <Hidden when={arrowDirection === 'neutral'}>
+                            { stock?.close ? 
+                                <StatNumber>
+                                    {stock?.close}
+                                </StatNumber> :
+                                <Text fontStyle='italic'>No price found</Text>
+                            }
+                            <Hidden when={arrowDirection === 'neutral'}>
+                                <StatHelpText>
                                     <StatArrow type={arrowDirection as StatArrowDirection}/>
                                     {stock?.changePercent}%
-                                </Hidden>
-                                <Hidden when={arrowDirection !== 'neutral'}>
-                                    -
-                                </Hidden>
-                            </StatHelpText>
+                                </StatHelpText>
+                            </Hidden>
+                            <Hidden when={arrowDirection !== 'neutral'}>
+                                <Text fontStyle='italic'>No change</Text>
+                            </Hidden>
                         </Stat>
                     </Stack>
                     <Heading as="h5" size="sm">{stock?.ticker}, {stock?.exchange}</Heading>
-                    <Heading as='h5' size='sm'>{stock?.sector}, {stock?.industry}</Heading>
+                    <Hidden when={!stock?.sector && !stock?.industry}>
+                        <Heading as='h5' size='sm'>{stock?.sector}, {stock?.industry}</Heading>
+                    </Hidden>
+                    <Hidden when={stock?.sector || stock?.industry}>
+                        <Heading fontStyle='italic' fontWeight='normal' size='sm'>No industry or sector found</Heading>
+                    </Hidden>
                 </Box>
                 <Stack spacing={2}>
                     <Collapse isOpen={infoVisible}>
