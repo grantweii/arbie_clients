@@ -1,4 +1,4 @@
-import { Box, Stat, StatArrow, StatHelpText, StatNumber, Flex, IconButton, Stack, Input, Text  } from '@chakra-ui/core';
+import { Box, Stat, StatArrow, StatHelpText, StatNumber, Flex, IconButton, Stack, Input, Text, Spinner } from '@chakra-ui/core';
 import React, { FC, useEffect, useState } from 'react';
 import { useTable, useSortBy, ColumnInstance, Row, usePagination } from 'react-table';
 import { Hidden } from '../../common/components/Hidden';

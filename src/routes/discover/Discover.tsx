@@ -3,7 +3,7 @@ import { useRouteNode } from 'react-router5';
 import Select from 'react-select';
 import useDiscoverViewModel from './DiscoverViewModel';
 import * as styles from './Discover.scss';
-import { Stack, Heading, Flex, Box } from '@chakra-ui/core';
+import { Stack, Heading, Flex, Box, Spinner } from '@chakra-ui/core';
 import Button from '../../common/components/Button';
 import DiscoverTable from './DiscoverTable';
 import { Hidden } from '../../common/components/Hidden';
@@ -94,7 +94,10 @@ const Discover: FC<any> = ({ children }) => {
                     />
                 </Stack>
             </Stack>
-            <Hidden when={!stockList?.results?.length}>
+            <Hidden when={!loadingList}>
+                <Spinner marginTop={4}/>
+            </Hidden>
+            <Hidden when={loadingList || !stockList?.results?.length}>
                 <Box marginTop={8}>
                     <Stack spacing={4}>
                         <Heading as='h4' size='md'>Total Results: {stockList?.count}</Heading>
