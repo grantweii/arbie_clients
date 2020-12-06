@@ -1,4 +1,5 @@
 import bent, { NodeResponse } from 'bent';
+import environment from '../../../arbie.environment';
 
 type QueryStatus = 'loading' | 'error' | 'success' | 'idle';
 
@@ -51,7 +52,9 @@ const cleanParams= (url: string) => {
 }
 
 export const get = async (url: string) => {
-    const cleanEndpoint = cleanParams(url)
-    return (bent(`http://127.0.0.1:5000`, 'GET', 'json', 200) as any)(cleanEndpoint);
+    const cleanEndpoint = cleanParams(url);
+    return (bent(`http://${environment.SERVER_HOST}:5000`, 'GET', 'json', 200) as any)(cleanEndpoint);
 }
-export const post = bent('http://127.0.0.1:5000', 'POST', 'json', 200) as any;
+export const post = (url: string) => {
+    return (bent(`http://${environment.SERVER_HOST}:5000`, 'POST', 'json', 200) as any)(url);
+}

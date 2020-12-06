@@ -5,6 +5,7 @@ import Stock from '../routes/fundamentals/Stock';
 import Root from '../routes/root/Root';
 import Welcome from '../routes/root/Welcome';
 import Discover from '../routes/discover/Discover';
+import Backtest from '../routes/backtest/Backtest';
 
 export default [
     {
@@ -42,6 +43,11 @@ export default [
                 name: 'discover',
                 path: 'discover',
                 component: Discover,
+            },
+            {
+                name: 'backtest',
+                path: 'backtest',
+                component: Backtest,
             }
         ]
     }

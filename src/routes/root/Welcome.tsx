@@ -4,6 +4,7 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel, Flex, Box, Heading } from '@ch
 import Search from '../search/Search';
 import * as styles from './arbie.scss';
 import Arbie from '../../common/assets/arbie.svg';
+import LoginButton from '../login/Login';
 
 const welcomeMessages = [
     'Arbie says hi!',
@@ -20,6 +21,7 @@ const Welcome: FC<any> = ({ children }) => {
         <>
             <Box className={styles.arbie}><Arbie/></Box>
             <Heading as='h1' size='xl' textAlign='center'>{welcomeMessages[index]}</Heading>
+            <LoginButton/>
         </>
     )
 }

@@ -2,11 +2,13 @@
     "name": "arbie",
     "author": "Grant Wei <grantwei96@gmail.com>",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "index.html",
     "scripts": {
-        "dev": "parcel ./src/index.html"
+        "dev": "parcel ./src/index.html",
+        "build": "parcel build ./src/index.html --no-cache --dist-dir ./build/"
     },
     "dependencies": {
+        "@auth0/auth0-react": "^1.1.0",
         "@chakra-ui/core": "^0.8.0",
         "@emotion/core": "^10.0.28",
         "@emotion/styled": "^10.0.27",
@@ -22,6 +24,7 @@
         "@types/react-table": "^7.0.23",
         "bent": "^7.3.9",
         "debounce-promise": "^3.1.2",
+        "dotenv": "^8.2.0",
         "echarts": "^4.8.0",
         "echarts-for-react": "^2.0.16",
         "emotion-theming": "^10.0.27",
@@ -34,6 +37,7 @@
         "react-router5": "^8.0.1",
         "react-select": "^3.1.0",
         "react-table": "^7.5.0",
+        "regenerator-runtime": "^0.13.7",
         "router5": "^8.0.1",
         "router5-plugin-browser": "^8.0.1",
         "router5-plugin-logger": "^8.0.1",

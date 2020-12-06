@@ -3,6 +3,7 @@ import { useRouteNode, Link } from 'react-router5';
 import { Tabs, TabList, Tab, TabPanels, TabPanel, Flex, Box, Button, Stack } from '@chakra-ui/core';
 import SearchIcon from '../../common/assets/search.svg';
 import GlobeIcon from '../../common/assets/globe.svg';
+import Brain from '../../common/assets/brain.svg';
 import * as styles from './RootStyles.scss';
 import { mergeClasses } from '../../common/utils/utils';
 
@@ -22,6 +23,11 @@ const links: ILink[] = [
         label: 'Discover',
         routeName: 'root.discover',
         icon: <GlobeIcon/>
+    },
+    {
+        label: 'Backtest',
+        routeName: 'root.backtest',
+        icon: <Brain/>
     }
 ]
 
