@@ -6395,11 +6395,11 @@ react-is@^16.7.0, react-is@^16.8.1:
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-query@^2.5.6:
-  version "2.5.6"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.5.6.tgz#fce28e9be4d8ab6000c257f69ef74ed49cdf0636"
-  integrity sha512-mN3y2EqRVmM2PAdqqt2wBzMZI0eO1+UMcEWXyOTnKZuoqpLSTdw87C+LdvhMrmmwlOvnV8sZZynuht/tVJv0cA==
+  version "2.26.4"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.26.4.tgz#18239b4c0b61d0b744f0d4a91f566b294fa9f752"
+  integrity sha512-sXGG0gh1ah11AcfptYOCRpGDoYMnssq6riQUpQaLSM2EOodVkexp3zNLk1MFDgfRGuXQst40Tnu17oNwni66aA==
   dependencies:
-    ts-toolbelt "^6.9.4"
+    "@babel/runtime" "^7.5.5"
 
 react-refresh@^0.6.0:
   version "0.6.0"
@@ -7471,11 +7471,6 @@ trim-newlines@^1.0.0:
   integrity sha512-m6s2OdQe5wgpFMC+pAJ+q9djG82O2jcHPOI6RNg1yy9rCYR+WD6Nbpl32fDpfC56nirdRy+opFa/Vk7HYhqaew==
   dependencies:
     glob "^7.1.2"
-
-ts-toolbelt@^6.9.4:
-  version "6.13.34"
-  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.13.34.tgz#3bd6e1e333a75c5ddab584d293f35494cb8c9222"
-  integrity sha512-ikZwSUPO+fW+OUnyER1KCG58khTi51Di3+iVdhkK7UshqkL0Ir749B2TQ44o/khkKvDSOMzF8NuVkQLycDXnsg==
 
 tslib@^1.0.0, tslib@^1.10.0, tslib@^1.11.2, tslib@^1.9.0, tslib@^1.9.3:
   version "1.13.0"
