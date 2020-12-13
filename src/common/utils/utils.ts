@@ -55,6 +55,7 @@ export const get = async (url: string) => {
     const cleanEndpoint = cleanParams(url);
     return (bent(`http://${environment.SERVER_HOST}:5000`, 'GET', 'json', 200) as any)(cleanEndpoint);
 }
-export const post = (url: string) => {
-    return (bent(`http://${environment.SERVER_HOST}:5000`, 'POST', 'json', 200) as any)(url);
+
+export const post = (url: string, body: any) => {
+    return (bent(`http://${environment.SERVER_HOST}:5000`, 'POST', 'json', 200) as any)(url, body);
 }

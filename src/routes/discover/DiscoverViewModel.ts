@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from 'react-query';
+import { actions } from 'react-table';
 import { getIndustries, getSectors, getExchanges, getStockList, GetStockListResponse } from './DiscoverActions';
 
 
