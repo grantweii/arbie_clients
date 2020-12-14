@@ -1,4 +1,4 @@
-import { getAnnualFinancial, getQuarterlyFinancial, getAnnualCashflow, getQuarterlyCashflow } from './FundamentalsActions';
+import { getAnnualFinancial, getQuarterlyFinancial, getAnnualCashflow, getQuarterlyCashflow, getQuarterlyRoe, getAnnualRoe } from './FundamentalsActions';
 import moment from 'moment';
 import { useRouteNode } from 'react-router5';
 import { useQuery } from 'react-query';
@@ -69,8 +69,11 @@ export type FundamentalsViewModel = {
     dilutedAvgSharesValues: number[],
     freeCashFlowDates: string[],
     freeCashFlowValues: number[],
+    returnOnEquityDates: string[],
+    returnOnEquityValues: number[], 
     financialData: IFundamental[],
     cashflowData: IFundamental[],
+    returnOnEquityData: IFundamental[],
     graphType: string,
     graphPeriod: string,
     referencePercentage: number,
@@ -135,8 +138,21 @@ export function useFundamentalsViewModel(): FundamentalsViewModel {
         { staleTime: 60 * 1000 * 10, enabled: graphPeriod === 'quarterly', onSuccess: handleDataRetrieved }
     );
 
+    const { data: annualReturnOnEquity } = useQuery(
+        ['annualReturnOnEquity', { stock_id: params.id }],
+        getAnnualRoe,
+        { staleTime: 60 * 1000 * 10, enabled: graphPeriod === 'annual' }
+    );
+
+    const { data: quarterlyReturnOnEquity } = useQuery(
+        ['quarterlyReturnOnEquity', { stock_id: params.id }],
+        getQuarterlyRoe,
+        { staleTime: 60 * 1000 * 10, enabled: graphPeriod === 'quarterly' }
+    );
+
     const financialData = graphPeriod === 'annual' ? annualFinancials : quarterlyFinancials;
     const cashflowData = graphPeriod === 'annual' ? annualCashflows : quarterlyCashflows;
+    const returnOnEquityData = graphPeriod === 'annual' ? annualReturnOnEquity : quarterlyReturnOnEquity;
 
     const {
         dates: dilutedEPSDates,
@@ -161,7 +177,13 @@ export function useFundamentalsViewModel(): FundamentalsViewModel {
         dates: freeCashFlowDates,
         values: freeCashFlowValues
     } = filterFundamentals(cashflowData, 'free_cash_flow', 'linear', yearsToFilter);
+    const {
+        dates: returnOnEquityDates,
+        values: returnOnEquityValues,
+    } = filterFundamentals(returnOnEquityData, 'return_on_equity', 'linear', yearsToFilter)
 
+    console.log('cashflow', annualCashflows);
+    console.log('roe', annualReturnOnEquity)
 
     return {
         dilutedEPSDates,
@@ -177,8 +199,11 @@ export function useFundamentalsViewModel(): FundamentalsViewModel {
         dilutedAvgSharesValues,
         freeCashFlowDates,
         freeCashFlowValues,
+        returnOnEquityDates,
+        returnOnEquityValues,
         financialData,
         cashflowData,
+        returnOnEquityData,
         graphType,
         graphPeriod,
         referencePercentage,
