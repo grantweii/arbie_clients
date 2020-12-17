@@ -182,9 +182,6 @@ export function useFundamentalsViewModel(): FundamentalsViewModel {
         values: returnOnEquityValues,
     } = filterFundamentals(returnOnEquityData, 'return_on_equity', 'linear', yearsToFilter)
 
-    console.log('cashflow', annualCashflows);
-    console.log('roe', annualReturnOnEquity)
-
     return {
         dilutedEPSDates,
         dilutedEPSValues,
