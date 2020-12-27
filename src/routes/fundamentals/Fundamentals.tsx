@@ -146,8 +146,11 @@ const Fundamentals: FC<any> = ({ children }) => {
         dilutedAvgSharesValues,
         freeCashFlowDates,
         freeCashFlowValues,
+        returnOnEquityDates,
+        returnOnEquityValues,
         financialData,
         cashflowData,
+        returnOnEquityData,
         graphType,
         graphPeriod,
         referencePercentage,
@@ -164,7 +167,7 @@ const Fundamentals: FC<any> = ({ children }) => {
     const { route } = useRouteNode('root.stock.id.fundamentals');
     const stock: IStock = useContext(StockContext);
 
-    if (!financialData?.length || !cashflowData?.length) return <Spinner />
+    if (!financialData?.length || !cashflowData?.length || !returnOnEquityData?.length) return <Spinner />
 
     return (
         <React.Fragment>
@@ -307,6 +310,19 @@ const Fundamentals: FC<any> = ({ children }) => {
                         graphType: 'linear',
                         title: 'Diluted Average Shares',
                         lineColor: 'purple',
+                    }) as any}
+                    notMerge={true}
+                    lazyUpdate={true}
+                    style={{ height: '400px' }}
+                />
+                <ReactEchartsCore
+                    echarts={echarts}
+                    option={option({
+                        dates: returnOnEquityDates,
+                        values: returnOnEquityValues,
+                        graphType: 'linear',
+                        title: 'Return on Equity',
+                        lineColor: 'blue',
                     }) as any}
                     notMerge={true}
                     lazyUpdate={true}
